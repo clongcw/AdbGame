@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="AdbGame.View.Page.GameView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:AdbGame.Extension"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:AdbGame.View.Page"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:AdbGame.Model"
+    xmlns:pu="https://opensource.panuon.com/wpf-ui"
+    Title="GameView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <pu:StyleDictionary Includes="TabControl" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style
+                x:Key="SubMenuTabControlStyle"
+                BasedOn="{StaticResource {x:Type TabControl}}"
+                TargetType="TabControl">
+                <Setter Property="pu:TabControlHelper.HeaderPanelAlignment" Value="Center" />
+                <Setter Property="pu:TabControlHelper.ItemsHeight" Value="45" />
+                <Setter Property="pu:TabControlHelper.ItemsPadding" Value="15,0" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="pu:TabControlHelper.ItemsHoverBackground" Value="{x:Null}" />
+                <Setter Property="pu:TabControlHelper.ItemsRibbonLineVisibility" Value="Visible" />
+                <Setter Property="pu:TabControlHelper.ItemsRibbonLinePlacement" Value="Bottom" />
+                <Setter Property="pu:TabControlHelper.ItemsRibbonLineBrush" Value="Transparent" />
+                <Setter Property="pu:TabControlHelper.ItemsHoverRibbonLineBrush" Value="#C62F2F" />
+                <Setter Property="pu:TabControlHelper.ItemsHoverRibbonLineThickness" Value="1" />
+                <Setter Property="pu:TabControlHelper.ItemsSelectedRibbonLineBrush" Value="#C62F2F" />
+                <Setter Property="pu:TabControlHelper.ItemsSelectedRibbonLineThickness" Value="3" />
+                <Setter Property="pu:TabControlHelper.ItemsSelectedBackground" Value="{x:Null}" />
+                <Setter Property="pu:TabControlHelper.HeaderPanelBorderBrush" Value="LightGray" />
+                <Setter Property="pu:TabControlHelper.HeaderPanelBorderThickness" Value="0,0,0,1" />
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid>
+        <TabControl Style="{StaticResource SubMenuTabControlStyle}" ItemsSource="{Binding Games}">
+        </TabControl>
+    </Grid>
+</Page>
