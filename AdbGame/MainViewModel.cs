@@ -1,5 +1,6 @@
 ﻿using AdbGame.View.Page;
 using AdbGame.ViewModel;
+using AdbGame.ViewModel.Page;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
