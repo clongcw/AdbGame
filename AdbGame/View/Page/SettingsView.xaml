@@ -4,16 +4,26 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:AdbGame.View.Page"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SettingsView">
     <Grid>
-        <ItemsControl Margin="20" ItemsSource="{Binding Mumus}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />    
+            <RowDefinition Height="*" />    
+        </Grid.RowDefinitions>
+        <WrapPanel Margin="20">
+            <ui:Button Content="添加游戏" Margin="0 10 10 10" Command="{Binding AddGameCommand}" Appearance="Info"/>
+            <ui:Button Content="保存" Margin="10" Command="{Binding SaveGameCommand}" Appearance="Info"/>
+        </WrapPanel>
+        <ItemsControl Grid.Row="1" Margin="20" ItemsSource="{Binding Mumus}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <WrapPanel>
                         <TextBlock VerticalAlignment="Center" Margin="10" Width="120" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox VerticalAlignment="Center" Margin="10" Text="{Binding Serial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ui:Button Content="删除" Margin="0 10 10 10" Command="{Binding DeleteGameCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  CommandParameter="{Binding Serial}" Appearance="Info"/>
                     </WrapPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

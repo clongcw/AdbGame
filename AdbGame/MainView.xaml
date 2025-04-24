@@ -9,6 +9,7 @@
     xmlns:pu="clr-namespace:Panuon.WPF.UI;assembly=Panuon.WPF.UI"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{Binding ApplicationTitle}"
+    Icon="/Assetes/gamelogo.ico"
     Width="1366"
     Height="768"
     WindowStartupLocation="CenterScreen"

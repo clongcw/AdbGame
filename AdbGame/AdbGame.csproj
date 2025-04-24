@@ -6,7 +6,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>gamelogo.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assetes\gamelogo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="gamelogo.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AdvancedSharpAdbClient" Version="3.3.13" />
@@ -25,6 +34,12 @@
   <ItemGroup>
     <ProjectReference Include="..\AdbGame.Common\AdbGame.Common.csproj" />
     <ProjectReference Include="..\AdbGame.UI\AdbGame.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assetes\gamelogo.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

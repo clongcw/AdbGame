@@ -8,13 +8,41 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Point = OpenCvSharp.Point;
+using Point = System.Drawing.Point;
 using Size = OpenCvSharp.Size;
 
 namespace AdbGame.Helper
 {
     public class GameHelper
     {
+        #region 正态分布
+        Random random = new Random();
+
+        // Box-Muller变换生成正态分布随机数
+        public double GenerateGaussianRandom(double mean, double stdDev)
+        {
+            double u1 = random.NextDouble(); // Uniform(0,1)随机数
+            double u2 = random.NextDouble();
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); // 标准正态分布
+            return mean + stdDev * randStdNormal; // 调整为指定均值和标准差
+        }
+
+        // 在指定Rect区域生成随机点
+        public Point GenerateRandomPoint(Rect rect)
+        {
+            double centerX = rect.X + rect.Width / 2.0; // 矩形中心X
+            double centerY = rect.Y + rect.Height / 2.0; // 矩形中心Y
+            double stdDevX = rect.Width / 6.0; // X方向标准差（范围可调整）
+            double stdDevY = rect.Height / 6.0; // Y方向标准差（范围可调整）
+
+            // 生成符合正态分布的坐标
+            int randomX = Math.Clamp((int)GenerateGaussianRandom(centerX, stdDevX), rect.X, rect.X + rect.Width - 1);
+            int randomY = Math.Clamp((int)GenerateGaussianRandom(centerY, stdDevY), rect.Y, rect.Y + rect.Height - 1);
+
+            return new Point(randomX, randomY);
+        }
+        #endregion
+
         public Rect MatchTemplate(Bitmap srcBitmap, Mat dstMat)
         {
             if (srcBitmap.Width < srcBitmap.Height)

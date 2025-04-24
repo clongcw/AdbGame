@@ -47,7 +47,8 @@ namespace AdbGame.ViewModel
             Serial = serial;
             Gamehelper = new GameHelper();
             Messages = new ObservableCollection<MessageData>();
-            Connect();
+            Task.Run(Connect);
+            
         }
         [RelayCommand]
         public void Connect()
@@ -55,35 +56,49 @@ namespace AdbGame.ViewModel
             try
             {
                 AdbServer adbServer = new AdbServer();
+            ConnectAdb:
                 AdbServerStatus adbServerStatus = adbServer.GetStatus();
-                if (!adbServerStatus.IsRunning)
+                if (adbServerStatus.IsRunning)
                 {
-                    var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
-                }
-                Adb = new AdbClient();
-                var adb_devices = Adb.GetDevices();
-                Serial = App.Current._host.Services.GetRequiredService<SettingsViewModel>().Mumus
-                                    .Where(s => s.GameName == Title)
-                                    .FirstOrDefault().Serial;
-                Adbdevice = adb_devices.ToList().Where(s => s.Serial == $"127.0.0.1:{Serial}").FirstOrDefault();
-                if (Adbdevice.Serial != null || Adbdevice.State != DeviceState.Offline)
-                {
-                    string res = Adb.Connect("127.0.0.1", Serial);
-                    if (res.Contains("connected") && Adbdevice.State == DeviceState.Online)
+                    Adb = new AdbClient();
+                    var adb_devices = Adb.GetDevices();
+                    Serial = App.Current._host.Services.GetRequiredService<SettingsViewModel>().Mumus
+                                        .Where(s => s.GameName == Title)
+                                        .FirstOrDefault().Serial;
+                    Adbdevice = adb_devices.Where(s => s.Serial == $"127.0.0.1:{Serial}").FirstOrDefault();
+                    if (Adbdevice.Serial == null || Adbdevice.State != DeviceState.Online)
                     {
-                        ShowMessage($"连接成功，地址：【127.0.0.1:{Serial}】", MessageType.Debug);
-                        GetGameMissions();
+                        var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                        string res = Adb.Connect("127.0.0.1", Serial);
+                        if (res.Contains("connected") && Adbdevice.State == DeviceState.Online)
+                        {
+                            ShowMessage($"连接成功，地址：【127.0.0.1:{Serial}】", MessageType.Debug);
+                            GetGameMissions();
+                        }
+                        else
+                        {
+                            ShowMessage($"连接失败，地址：【127.0.0.1:{Serial}】", MessageType.Error);
+                        }
                     }
                     else
                     {
-                        ShowMessage($"连接失败，地址：【127.0.0.1:{Serial}】", MessageType.Error);
+                        string res = Adb.Connect("127.0.0.1", Serial);
+                        if (res.Contains("connected") && Adbdevice.State == DeviceState.Online)
+                        {
+                            ShowMessage($"连接成功，地址：【127.0.0.1:{Serial}】", MessageType.Debug);
+                            GetGameMissions();
+                        }
+                        else
+                        {
+                            ShowMessage($"连接失败，地址：【127.0.0.1:{Serial}】", MessageType.Error);
+                        }
                     }
                 }
                 else
                 {
-                    ShowMessage($"设备【127.0.0.1:{Serial}】不在线，请检查设备是否连接", MessageType.Error);
+                    var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                    goto ConnectAdb;
                 }
-
             }
             catch (Exception ex)
             {
@@ -123,10 +138,8 @@ namespace AdbGame.ViewModel
                 {
                     IsRunning = true;
                     cts = new CancellationTokenSource();
-
                     while (IsRunning && !cts.IsCancellationRequested)
                     {
-                        await Task.Delay(500);
                         foreach (var item in Gamemissions)
                         {
                             if (item.IsChecked)
@@ -142,11 +155,13 @@ namespace AdbGame.ViewModel
                                             Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
                                             if (rect.X != 0 && rect.Y != 0)
                                             {
-                                                int x = rect.X + rect.Width / 2;
-                                                int y = rect.Y + rect.Height / 2;
-                                                Point point = new Point(x, y);
+                                                //使用正态分布获取随机坐标
+                                                Point point = Gamehelper.GenerateRandomPoint(rect);
+                                                int x = point.X;
+                                                int y = point.Y;
                                                 Adb.Click(Adbdevice, point);
-                                                ShowMessage($"点击【{Path.GetFileName(step.StepName)}】成功，坐标：【{x}，{y}】");
+                                                ShowMessage($"点击【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】成功，坐标：【{x}，{y}】");
+                                                await Task.Delay(1000);
                                             }
                                         }
                                     }
@@ -157,8 +172,6 @@ namespace AdbGame.ViewModel
                     await Stop();
                 }
             });
-
-
         }
 
         [RelayCommand]
