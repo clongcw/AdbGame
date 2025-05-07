@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 
 namespace AdbGame.ViewModel.Page
 {

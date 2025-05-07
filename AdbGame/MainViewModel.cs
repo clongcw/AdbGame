@@ -37,7 +37,12 @@ namespace AdbGame
                     Content = "游戏",
                     Icon = new SymbolIcon { Symbol = SymbolRegular.Games48 },
                     TargetPageType = typeof(GameView),
-
+                },
+                new NavigationViewItem()
+                {
+                    Content = "截屏",
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Screenshot20 },
+                    TargetPageType = typeof(ScreenShotView),
                 }
             };
 

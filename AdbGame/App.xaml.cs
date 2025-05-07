@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using Application = System.Windows.Application;
 
 namespace AdbGame
 {
@@ -50,6 +51,9 @@ namespace AdbGame
 
                     services.AddSingleton<MuMuViewModel>();
                     services.AddSingleton<MuMuView>();
+
+                    services.AddSingleton<ScreenShotViewModel>();
+                    services.AddSingleton<ScreenShotView>();
 
                     services.AddSingleton<SettingsViewModel>();
                     services.AddSingleton<SettingsView>();

@@ -21,9 +21,9 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <WrapPanel>
-                        <TextBlock VerticalAlignment="Center" Margin="10" Width="120" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox VerticalAlignment="Center" Margin="10" Text="{Binding Serial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <ui:Button Content="删除" Margin="0 10 10 10" Command="{Binding DeleteGameCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  CommandParameter="{Binding Serial}" Appearance="Info"/>
+                        <TextBox VerticalAlignment="Center" Margin="10" Width="120" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox VerticalAlignment="Center" Margin="10" Width="80" Text="{Binding Serial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ui:Button Content="删除" Margin="0 10 10 10"  Command="{Binding DeleteGameCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  CommandParameter="{Binding Serial}" Appearance="Info"/>
                     </WrapPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

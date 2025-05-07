@@ -7,13 +7,16 @@ using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Emgu.CV.Face;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using Panuon.WPF.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,6 +24,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 using Point = System.Drawing.Point;
 using Rect = OpenCvSharp.Rect;
 
@@ -47,9 +52,9 @@ namespace AdbGame.ViewModel
             Serial = serial;
             Gamehelper = new GameHelper();
             Messages = new ObservableCollection<MessageData>();
-            Task.Run(Connect);
-            
+            //Task.Run(Connect);
         }
+
         [RelayCommand]
         public void Connect()
         {
@@ -132,6 +137,12 @@ namespace AdbGame.ViewModel
         [RelayCommand]
         public async void Start()
         {
+            string src = "C:\\Project\\AdbGame\\AdbGame\\bin\\Debug\\net8.0-windows10.0.26100.0\\Assets\\Image\\无双萌将\\1920\\主线\\66.png";
+            string dst = "C:\\Project\\AdbGame\\AdbGame\\bin\\Debug\\net8.0-windows10.0.26100.0\\Assets\\Image\\无双萌将\\1920\\主线\\工会.png";
+
+            //Rect rect = Gamehelper.MatchPicBySurf(Cv2.ImRead(src), Cv2.ImRead(dst));
+            //Rect rect = Gamehelper.MatchPicBySift(Cv2.ImRead(src), Cv2.ImRead(dst));
+
             await Task.Run(async () =>
             {
                 if (!IsRunning)
@@ -153,6 +164,7 @@ namespace AdbGame.ViewModel
                                         if (!cts.IsCancellationRequested)
                                         {
                                             Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
+                                            //Rect rect = Gamehelper.MatchPicBySift(BitmapConverter.ToMat(image), Cv2.ImRead(dst));
                                             if (rect.X != 0 && rect.Y != 0)
                                             {
                                                 //使用正态分布获取随机坐标
@@ -162,6 +174,10 @@ namespace AdbGame.ViewModel
                                                 Adb.Click(Adbdevice, point);
                                                 ShowMessage($"点击【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】成功，坐标：【{x}，{y}】");
                                                 await Task.Delay(1000);
+                                            }
+                                            else
+                                            {
+                                                //Adb.Click(Adbdevice, new Point(360, 1200));
                                             }
                                         }
                                     }

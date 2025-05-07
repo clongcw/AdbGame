@@ -1,6 +1,8 @@
-﻿using HandyControl.Controls;
+﻿using Emgu.CV;
+using HandyControl.Controls;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using OpenCvSharp.Features2D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mat = OpenCvSharp.Mat;
 using Point = System.Drawing.Point;
 using Size = OpenCvSharp.Size;
 
@@ -48,11 +51,8 @@ namespace AdbGame.Helper
             if (srcBitmap.Width < srcBitmap.Height)
             {
                 Rect rect = new Rect(0, 0, srcBitmap.Width, srcBitmap.Height);
-                using (Mat srcMat = new Mat(BitmapConverter.ToMat(srcBitmap), rect))
+                using (Mat srcMat = new(BitmapConverter.ToMat(srcBitmap), rect))
                 {
-                    // 颜色转换（原地操作，无需新建 Mat）
-                    Cv2.CvtColor(srcMat, srcMat, ColorConversionCodes.BGRA2BGR);
-
                     // 调用核心匹配逻辑
                     return MatchTemplate(srcMat, dstMat, TemplateMatchModes.CCoeffNormed);
                 }
@@ -83,10 +83,13 @@ namespace AdbGame.Helper
         /// <returns>匹配区域的矩形范围，未匹配时返回空矩形</returns>
         public Rect MatchTemplate(Mat srcMat, Mat dstMat, TemplateMatchModes matchMode, Mat? maskMat = null, double threshold = 0.8)
         {
+            Cv2.CvtColor(srcMat, srcMat, ColorConversionCodes.BGR2GRAY);
+            Cv2.CvtColor(dstMat, dstMat, ColorConversionCodes.BGR2GRAY);
+
             try
             {
                 using var result = new Mat();
-                Cv2.MatchTemplate(srcMat, dstMat, result, matchMode, maskMat!);
+                Cv2.MatchTemplate(srcMat, dstMat, result, matchMode);
 
                 if (matchMode is TemplateMatchModes.SqDiff or TemplateMatchModes.CCoeff or TemplateMatchModes.CCorr)
                 {
@@ -120,6 +123,7 @@ namespace AdbGame.Helper
                 return default;
             }
         }
+
 
         public Mat LoadAssetImage(string filePath, ImreadModes flags = ImreadModes.Color)
         {
