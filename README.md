@@ -21,5 +21,5 @@
 
 ### 开源库
 
-- [opencv](https://github.com/opencv/opencv)  
+- [opencvsharp](https://github.com/shimat/opencvsharp)  
   Open Source Computer Vision Library
