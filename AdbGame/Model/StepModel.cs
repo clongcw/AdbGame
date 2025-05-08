@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AdbGame.Model
+﻿namespace AdbGame.Model
 {
     public class StepModel
     {

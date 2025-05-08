@@ -5,8 +5,6 @@ using AdbGame.ViewModel.Page;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 using Application = System.Windows.Application;
 
@@ -58,7 +56,7 @@ namespace AdbGame
                     services.AddSingleton<SettingsViewModel>();
                     services.AddSingleton<SettingsView>();
 
-                    
+
 
                     services.AddSingleton<WeakReferenceMessenger>();
                     services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());

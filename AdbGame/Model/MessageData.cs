@@ -1,18 +1,13 @@
 ﻿
 using AdbGame.Converter;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdbGame.Model
 {
     /// <summary>
     /// 用于页面展示的消息数据
     /// </summary>
-    public class MessageData 
+    public class MessageData
     {
         public MessageData(string Content, DateTime dateTime, string Channel, MessageType Type = MessageType.Info, string Title = "")
         {

@@ -1,15 +1,6 @@
-﻿using Emgu.CV;
-using HandyControl.Controls;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using OpenCvSharp.Extensions;
-using OpenCvSharp.Features2D;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mat = OpenCvSharp.Mat;
 using Point = System.Drawing.Point;
 using Size = OpenCvSharp.Size;

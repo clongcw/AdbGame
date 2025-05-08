@@ -1,25 +1,13 @@
-﻿using AdvancedSharpAdbClient.Models;
+﻿using AdbGame.Extension;
 using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-using AdbGame.Model;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using Windows.Devices.Usb;
 using Panuon.WPF.UI;
-using System.Windows;
-using System.Drawing;
-using Emgu.CV.Reg;
-using AdbGame.Extension;
-using System.Windows.Interop;
-using System.Windows.Shell;
-using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 
 namespace AdbGame.ViewModel.Page
 {
@@ -38,6 +26,7 @@ namespace AdbGame.ViewModel.Page
         [ObservableProperty] private int _y;
         [ObservableProperty] private int _width;
         [ObservableProperty] private int _height;
+        [ObservableProperty] private string _aDBPath;
 
         public ScreenShotViewModel()
         {
@@ -63,7 +52,7 @@ namespace AdbGame.ViewModel.Page
                     Adbdevice = adb_devices.Where(s => s.Serial == $"127.0.0.1:{Serial}").FirstOrDefault();
                     if (Adbdevice.Serial == null || Adbdevice.State != DeviceState.Online)
                     {
-                        var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                        var result = adbServer.StartServer(ADBPath);
                         string res = Adb.Connect("127.0.0.1", Serial);
                         if (res.Contains("connected") && Adbdevice.State == DeviceState.Online)
                         {
@@ -91,7 +80,7 @@ namespace AdbGame.ViewModel.Page
                 }
                 else
                 {
-                    var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                    var result = adbServer.StartServer(ADBPath);
                     goto ConnectAdb;
                 }
             }
@@ -107,9 +96,19 @@ namespace AdbGame.ViewModel.Page
         [RelayCommand]
         public void ScreenShot()
         {
-            Framebuffer framebuffer = Adb.GetFrameBuffer(Adbdevice);
-            SrcImage = framebuffer.ToImage();
-            SrcImageSource = SrcImage.ToBitmapImage();
+            try
+            {
+                Framebuffer framebuffer = Adb.GetFrameBuffer(Adbdevice);
+                SrcImage = framebuffer.ToImage();
+                SrcImageSource = SrcImage.ToBitmapImage();
+            }
+            catch (Exception ex)
+            {
+                App.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    MessageBoxX.Show($"{ex}", "提示", MessageBoxButton.OK, MessageBoxIcon.Error, DefaultButton.YesOK);
+                });
+            }
         }
 
         [RelayCommand]
@@ -125,7 +124,6 @@ namespace AdbGame.ViewModel.Page
             {
                 // 用户选择了文件夹
                 TemplateLocation = $"{folderBrowserDialog.SelectedPath}";
-                // 执行处理逻辑
             }
         }
 
@@ -173,8 +171,6 @@ namespace AdbGame.ViewModel.Page
                     MessageBoxX.Show($"模板为空", "提示", MessageBoxButton.OK, MessageBoxIcon.Error, DefaultButton.YesOK);
                 });
             }
-
-
         }
 
         [RelayCommand]

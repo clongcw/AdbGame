@@ -7,24 +7,11 @@ using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Emgu.CV.Face;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
 using Panuon.WPF.UI;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Media3D;
 using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 using Point = System.Drawing.Point;
 using Rect = OpenCvSharp.Rect;
@@ -43,6 +30,7 @@ namespace AdbGame.ViewModel
         [ObservableProperty] private ObservableCollection<StepModel> _steps;
         [ObservableProperty] private ObservableCollection<GameMission> _gamemissions;
         [ObservableProperty] private bool _isRunning = false;
+        [ObservableProperty] private string _aDBPath;
         CancellationTokenSource cts;
 
         public MuMuViewModel(string title, int serial)
@@ -52,7 +40,6 @@ namespace AdbGame.ViewModel
             Serial = serial;
             Gamehelper = new GameHelper();
             Messages = new ObservableCollection<MessageData>();
-            //Task.Run(Connect);
         }
 
         [RelayCommand]
@@ -73,7 +60,7 @@ namespace AdbGame.ViewModel
                     Adbdevice = adb_devices.Where(s => s.Serial == $"127.0.0.1:{Serial}").FirstOrDefault();
                     if (Adbdevice.Serial == null || Adbdevice.State != DeviceState.Online)
                     {
-                        var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                        var result = adbServer.StartServer(ADBPath);
                         string res = Adb.Connect("127.0.0.1", Serial);
                         if (res.Contains("connected") && Adbdevice.State == DeviceState.Online)
                         {
@@ -101,7 +88,7 @@ namespace AdbGame.ViewModel
                 }
                 else
                 {
-                    var result = adbServer.StartServer("C:/Program Files/Netease/MuMuPlayer-12.0/shell/adb.exe");
+                    var result = adbServer.StartServer(ADBPath);
                     goto ConnectAdb;
                 }
             }
@@ -137,12 +124,6 @@ namespace AdbGame.ViewModel
         [RelayCommand]
         public async void Start()
         {
-            string src = "C:\\Project\\AdbGame\\AdbGame\\bin\\Debug\\net8.0-windows10.0.26100.0\\Assets\\Image\\无双萌将\\1920\\主线\\66.png";
-            string dst = "C:\\Project\\AdbGame\\AdbGame\\bin\\Debug\\net8.0-windows10.0.26100.0\\Assets\\Image\\无双萌将\\1920\\主线\\工会.png";
-
-            //Rect rect = Gamehelper.MatchPicBySurf(Cv2.ImRead(src), Cv2.ImRead(dst));
-            //Rect rect = Gamehelper.MatchPicBySift(Cv2.ImRead(src), Cv2.ImRead(dst));
-
             await Task.Run(async () =>
             {
                 if (!IsRunning)
@@ -164,7 +145,6 @@ namespace AdbGame.ViewModel
                                         if (!cts.IsCancellationRequested)
                                         {
                                             Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
-                                            //Rect rect = Gamehelper.MatchPicBySift(BitmapConverter.ToMat(image), Cv2.ImRead(dst));
                                             if (rect.X != 0 && rect.Y != 0)
                                             {
                                                 //使用正态分布获取随机坐标
@@ -174,10 +154,6 @@ namespace AdbGame.ViewModel
                                                 Adb.Click(Adbdevice, point);
                                                 ShowMessage($"点击【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】成功，坐标：【{x}，{y}】");
                                                 await Task.Delay(1000);
-                                            }
-                                            else
-                                            {
-                                                //Adb.Click(Adbdevice, new Point(360, 1200));
                                             }
                                         }
                                     }
@@ -204,8 +180,6 @@ namespace AdbGame.ViewModel
                 });
             }
         }
-
-
 
         public void ShowMessage(string message, MessageType type = MessageType.Info)
         {
