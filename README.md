@@ -22,4 +22,13 @@
 ### 开源库
 
 - [opencvsharp](https://github.com/shimat/opencvsharp)  
-  Open Source Computer Vision Library
+  OpenCV wrapper for .NET
+- [AdvancedSharpAdbClient](https://github.com/SharpAdb/AdvancedSharpAdbClient)  
+  AdvancedSharpAdbClient is a .NET library that allows .NET, Mono and Unity applications to communicate with Android devices. It's improved version of SharpAdbClient.
+- [Panuon.WPF.UI](https://github.com/Panuon/Panuon.WPF.UI)  
+  Professional wpf ui library.
+- [WPF-UI](https://github.com/lepoco/wpfui)  
+  WPF UI provides the Fluent experience in your known and loved WPF framework. Intuitive design, themes, navigation and new immersive controls. All natively and effortlessly.
+- [HandyControl](https://github.com/HandyOrg/HandyControl)  
+  Contains some simple and commonly used WPF controls
+  
