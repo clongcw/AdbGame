@@ -10,3 +10,16 @@
 ![anchor text](./AdbGame.Image/主界面.png "界面预览")
 ![anchor text](./AdbGame.Image/设置模板.png "界面预览")
 ![anchor text](./AdbGame.Image/设置.png "界面预览")
+
+## 许可证
+
+### MaaFramework
+
+本项目采用 [`MIT`] 许可证进行开源。
+
+## 鸣谢
+
+### 开源库
+
+- [opencv](https://github.com/opencv/opencv)  
+  Open Source Computer Vision Library
