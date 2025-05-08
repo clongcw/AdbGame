@@ -13,7 +13,7 @@
 
 ## 许可证
 
-### MaaFramework
+### AdbGame
 
 本项目采用 [`MIT`] 许可证进行开源。
 
