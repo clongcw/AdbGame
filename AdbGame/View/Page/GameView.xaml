@@ -41,7 +41,9 @@
         </ResourceDictionary>
     </Page.Resources>
     <Grid>
-        <TabControl Style="{StaticResource SubMenuTabControlStyle}" ItemsSource="{Binding Games}">
-        </TabControl>
+        <TabControl
+            ItemsSource="{Binding Games}"
+            SelectedItem="{Binding SelectedItem}"
+            Style="{StaticResource SubMenuTabControlStyle}" />
     </Grid>
 </Page>

@@ -21,9 +21,6 @@
   <ItemGroup>
     <PackageReference Include="AdvancedSharpAdbClient" Version="3.3.13" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
-    <PackageReference Include="Emgu.CV.Bitmap" Version="4.10.0.5680" />
-    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.10.0.5680" />
     <PackageReference Include="HandyControl" Version="3.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />

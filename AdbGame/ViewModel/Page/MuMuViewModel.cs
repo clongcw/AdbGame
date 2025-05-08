@@ -40,6 +40,7 @@ namespace AdbGame.ViewModel
             Serial = serial;
             Gamehelper = new GameHelper();
             Messages = new ObservableCollection<MessageData>();
+            ADBPath = App.Current._host.Services.GetRequiredService<SettingsViewModel>().ADBPath;
         }
 
         [RelayCommand]

@@ -10,6 +10,7 @@ namespace AdbGame.ViewModel.Page
     {
         [ObservableProperty] private string _title = string.Empty;
         [ObservableProperty] private ObservableCollection<TabItem> _games;
+        [ObservableProperty] private TabItem _selectedItem;
 
         public GameViewModel()
         {

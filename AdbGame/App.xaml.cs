@@ -44,6 +44,9 @@ namespace AdbGame
                     services.AddSingleton<MainViewModel>();
                     services.AddSingleton<MainView>();
 
+                    services.AddSingleton<SettingsViewModel>();
+                    services.AddSingleton<SettingsView>();
+
                     services.AddSingleton<GameViewModel>();
                     services.AddSingleton<GameView>();
 
@@ -52,11 +55,6 @@ namespace AdbGame
 
                     services.AddSingleton<ScreenShotViewModel>();
                     services.AddSingleton<ScreenShotView>();
-
-                    services.AddSingleton<SettingsViewModel>();
-                    services.AddSingleton<SettingsView>();
-
-
 
                     services.AddSingleton<WeakReferenceMessenger>();
                     services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());

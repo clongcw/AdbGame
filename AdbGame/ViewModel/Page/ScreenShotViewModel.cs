@@ -3,6 +3,7 @@ using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Panuon.WPF.UI;
 using System.IO;
 using System.Windows;
@@ -35,6 +36,7 @@ namespace AdbGame.ViewModel.Page
             Width = 50;
             Height = 50;
             Serial = 17056;
+            ADBPath = App.Current._host.Services.GetRequiredService<SettingsViewModel>().ADBPath;
         }
 
         [RelayCommand]
