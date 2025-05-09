@@ -36,9 +36,15 @@ namespace AdbGame.ViewModel.Page
         public void SetJson()
         {
             ObservableCollection<MuMuModel> mumus = new ObservableCollection<MuMuModel>();
-            mumus.Add(new MuMuModel() { GameName = "少年西游记2", Serial = 16768 });
-            mumus.Add(new MuMuModel() { GameName = "笔绘西行", Serial = 16896 });
-            mumus.Add(new MuMuModel() { GameName = "河图寻仙记", Serial = 16864 });
+            mumus.Add(new MuMuModel() { GameName = "征服与荣耀", SubGameName = "征服与荣耀", Serial = 17120 });
+            mumus.Add(new MuMuModel() { GameName = "征服与荣耀", SubGameName = "九游-征服与荣耀", Serial = 17152 });
+            mumus.Add(new MuMuModel() { GameName = "无双萌将", SubGameName = "无双萌将", Serial = 17056 });
+            mumus.Add(new MuMuModel() { GameName = "花语卷", SubGameName = "花语卷", Serial = 17088 });
+            mumus.Add(new MuMuModel() { GameName = "守卫山海", SubGameName = "守卫山海", Serial = 17024 });
+            mumus.Add(new MuMuModel() { GameName = "少年西游记2", SubGameName = "少年西游记2", Serial = 16768 });
+            mumus.Add(new MuMuModel() { GameName = "笔绘西行", SubGameName = "笔绘西行", Serial = 16896 });
+            mumus.Add(new MuMuModel() { GameName = "河图寻仙记", SubGameName = "河图寻仙记", Serial = 16864 });
+
 
 
             string json = JsonConvert.SerializeObject(mumus, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings

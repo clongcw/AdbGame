@@ -20,7 +20,7 @@ namespace AdbGame.ViewModel.Page
             {
                 Games.Add(new TabItem()
                 {
-                    Header = item.GameName,
+                    Header = item.SubGameName,
                     Content = new MuMuView(),
                     DataContext = new MuMuViewModel(item.GameName, item.Serial)
                 });
