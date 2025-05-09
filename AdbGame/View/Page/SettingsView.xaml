@@ -36,10 +36,10 @@
                     <DataTemplate>
                         <WrapPanel>
                             <TextBox
-                                Width="120"
+                                Width="150"
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding SubGameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 Width="80"
                                 Margin="10"

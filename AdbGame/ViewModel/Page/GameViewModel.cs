@@ -22,7 +22,7 @@ namespace AdbGame.ViewModel.Page
                 {
                     Header = item.SubGameName,
                     Content = new MuMuView(),
-                    DataContext = new MuMuViewModel(item.GameName, item.Serial)
+                    DataContext = new MuMuViewModel(item.SubGameName, item.Serial)
                 });
             }
         }

@@ -56,7 +56,7 @@ namespace AdbGame.ViewModel
                     Adb = new AdbClient();
                     var adb_devices = Adb.GetDevices();
                     Serial = App.Current._host.Services.GetRequiredService<SettingsViewModel>().Mumus
-                                        .Where(s => s.GameName == Title)
+                                        .Where(s => s.SubGameName == Title)
                                         .FirstOrDefault().Serial;
                     Adbdevice = adb_devices.Where(s => s.Serial == $"127.0.0.1:{Serial}").FirstOrDefault();
                     if (Adbdevice.Serial == null || Adbdevice.State != DeviceState.Online)
@@ -105,8 +105,11 @@ namespace AdbGame.ViewModel
             Framebuffer framebuffer = Adb.GetFrameBuffer(Adbdevice);
             using (Bitmap image = framebuffer.ToImage())
             {
+                string gameName = App.Current._host.Services.GetRequiredService<SettingsViewModel>().Mumus
+                                        .Where(s => s.SubGameName == Title)
+                                        .FirstOrDefault().GameName;
                 int width = image.Width > image.Height ? image.Width : image.Height;
-                string imagePath = $"{Environment.CurrentDirectory}\\Assets\\Image\\{Title}\\{width}";
+                string imagePath = $"{Environment.CurrentDirectory}\\Assets\\Image\\{gameName}\\{width}";
                 Steps = new ObservableCollection<StepModel>();
                 string[] directories = Directory.GetDirectories(imagePath);
 
