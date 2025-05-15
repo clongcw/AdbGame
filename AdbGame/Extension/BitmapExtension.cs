@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -17,6 +18,16 @@ namespace AdbGame.Extension
             image.EndInit();
             return image;
         }
+
+        public static byte[] BitmapToByteArray(this Bitmap bitmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, ImageFormat.Png);
+                return ms.ToArray();
+            }
+        }
+
 
         public static Scalar ToScalar(this Color color)
         {

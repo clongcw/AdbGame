@@ -32,6 +32,5 @@
                     FontWeight="DemiBold" />
             </ui:NavigationView.Header>
         </ui:NavigationView>
-        
     </Grid>
 </pu:WindowX>

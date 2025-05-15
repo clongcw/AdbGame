@@ -1,4 +1,5 @@
 ﻿using AdbGame.Common;
+using AdbGame.Extension;
 using AdbGame.Helper;
 using AdbGame.Model;
 using AdbGame.ViewModel.Page;
@@ -8,7 +9,14 @@ using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using OpenCvSharp;
 using Panuon.WPF.UI;
+using Sdcb.PaddleInference;
+using Sdcb.PaddleOCR;
+using Sdcb.PaddleOCR.Models;
+using Sdcb.PaddleOCR.Models.Local;
+using Sdcb.PaddleOCR.Models.LocalV4;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -148,16 +156,32 @@ namespace AdbGame.ViewModel
                                     {
                                         if (!cts.IsCancellationRequested)
                                         {
-                                            Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
-                                            if (rect.X != 0 && rect.Y != 0)
+                                            if (File.Exists(step.StepName))
                                             {
-                                                //使用正态分布获取随机坐标
-                                                Point point = Gamehelper.GenerateRandomPoint(rect);
-                                                int x = point.X;
-                                                int y = point.Y;
-                                                Adb.Click(Adbdevice, point);
-                                                ShowMessage($"点击【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】成功，坐标：【{x}，{y}】");
-                                                await Task.Delay(1000);
+                                                Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
+                                                //Rect rect = Gamehelper.OCR(image, "支持分身的应用");
+                                                if (rect.X != 0 && rect.Y != 0)
+                                                {
+                                                    string stepName = Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4);
+                                                    if (stepName != "任务结束")
+                                                    {
+                                                        //使用正态分布获取随机坐标
+                                                        Point point = Gamehelper.GenerateRandomPoint(rect);
+                                                        int x = point.X;
+                                                        int y = point.Y;
+                                                        Adb.Click(Adbdevice, point);
+                                                        ShowMessage($"点击【{stepName}】成功，坐标：【{x}，{y}】");
+                                                        await Task.Delay(1000);
+                                                    }
+                                                    else
+                                                    {
+                                                        await Stop();
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ShowMessage($"模板【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】不存在", MessageType.Error);
                                             }
                                         }
                                     }
@@ -178,10 +202,6 @@ namespace AdbGame.ViewModel
                 cts.Cancel();
                 IsRunning = false;
                 ShowMessage("任务完成！", MessageType.Debug);
-                await App.Current.Dispatcher.InvokeAsync(async () =>
-                {
-                    MessageBoxX.Show("任务完成！", "提示", MessageBoxButton.OK, MessageBoxIcon.Success, DefaultButton.YesOK);
-                });
             }
         }
 

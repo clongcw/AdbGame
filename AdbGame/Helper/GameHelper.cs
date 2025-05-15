@@ -1,9 +1,13 @@
 ﻿using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using Sdcb.PaddleOCR.Models.Local;
+using Sdcb.PaddleOCR.Models;
+using Sdcb.PaddleOCR;
 using System.IO;
 using Mat = OpenCvSharp.Mat;
 using Point = System.Drawing.Point;
 using Size = OpenCvSharp.Size;
+using AdbGame.Extension;
 
 namespace AdbGame.Helper
 {
@@ -37,6 +41,34 @@ namespace AdbGame.Helper
         }
         #endregion
 
+        public Rect OCR(Bitmap srcBitmap, string dstText)
+        {
+            Rect rotatedRect = default;
+            FullOcrModel model = LocalFullModels.ChineseV4;
+            byte[] sampleImageData = srcBitmap.BitmapToByteArray();
+
+            using (PaddleOcrAll all = new(model)
+            {
+                AllowRotateDetection = true,
+                Enable180Classification = false,
+            })
+            {
+                using (Mat src = Cv2.ImDecode(sampleImageData, ImreadModes.Color))
+                {
+                    PaddleOcrResult result = all.Run(src);
+                    foreach (PaddleOcrResultRegion region in result.Regions)
+                    {
+                        if (region.Text == dstText)
+                        {
+                            rotatedRect = region.Rect.RotatedRectToRect();
+                            break;
+                        }
+                    }
+                }
+            }
+            return rotatedRect;
+        }
+
         public Rect MatchTemplate(Bitmap srcBitmap, Mat dstMat)
         {
             if (srcBitmap.Width < srcBitmap.Height)
@@ -60,7 +92,6 @@ namespace AdbGame.Helper
                     return MatchTemplate(srcMat, dstMat, TemplateMatchModes.CCoeffNormed);
                 }
             }
-
         }
 
         /// <summary>
