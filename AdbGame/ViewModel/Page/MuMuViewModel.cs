@@ -9,6 +9,7 @@ using AdvancedSharpAdbClient.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using OpenCvSharp;
 using Panuon.WPF.UI;
 using Sdcb.PaddleInference;
@@ -19,6 +20,7 @@ using Sdcb.PaddleOCR.Models.LocalV4;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using MessageBoxIcon = Panuon.WPF.UI.MessageBoxIcon;
 using Point = System.Drawing.Point;
@@ -38,7 +40,9 @@ namespace AdbGame.ViewModel
         [ObservableProperty] private ObservableCollection<StepModel> _steps;
         [ObservableProperty] private ObservableCollection<GameMission> _gamemissions;
         [ObservableProperty] private bool _isRunning = false;
+        [ObservableProperty] private bool _useJson = false;
         [ObservableProperty] private string _aDBPath;
+        [ObservableProperty] private string _imagePath;
         CancellationTokenSource cts;
 
         public MuMuViewModel(string title, int serial)
@@ -117,17 +121,44 @@ namespace AdbGame.ViewModel
                                         .Where(s => s.SubGameName == Title)
                                         .FirstOrDefault().GameName;
                 int width = image.Width > image.Height ? image.Width : image.Height;
-                string imagePath = $"{Environment.CurrentDirectory}\\Assets\\Image\\{gameName}\\{width}";
+                string missionPath = $"{Environment.CurrentDirectory}\\Assets\\Image\\{gameName}\\Mission";
+                ImagePath = $"{Environment.CurrentDirectory}\\Assets\\Image\\{gameName}\\{width}";
                 Steps = new ObservableCollection<StepModel>();
-                string[] directories = Directory.GetDirectories(imagePath);
+                string[] directories = Directory.GetDirectories(ImagePath);
+                string[] missions = Directory.GetFiles(missionPath);
 
-                foreach (var task in directories)
+                if (Directory.Exists(missionPath))
                 {
-                    Gamemissions.Add(new GameMission { GameMissionName = Path.GetFileName(task), IsChecked = false });
-                    string[] files = Directory.GetFiles(task);//获取文件路径
-                    foreach (var item in files)
+                    UseJson = true;
+                    foreach (var task in missions)
                     {
-                        Steps.Add(new StepModel() { GameName = Title, GameInstance = Path.GetFileName(task), StepName = item });
+                        Gamemissions.Add(new GameMission { GameMissionName = Path.GetFileName(task).Substring(0, Path.GetFileName(task).Length - 5), IsChecked = false });
+                        ObservableCollection<StepModel> steps = JsonConvert.DeserializeObject<ObservableCollection<StepModel>>(File.ReadAllText(task));
+                        Steps = new ObservableCollection<StepModel>(Steps.Concat(steps));
+
+                    }
+
+                }
+                /*else
+                {
+                    Steps.Add(new StepModel() { GameName = Title, GameInstance = "主线", StepName = "", XShift = 0, YShift = 0 });
+                    string json = JsonConvert.SerializeObject(Steps, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
+
+                    File.WriteAllText(jsonPath, json);
+                }*/
+                else
+                {
+                    foreach (var task in directories)
+                    {
+                        Gamemissions.Add(new GameMission { GameMissionName = Path.GetFileName(task), IsChecked = false });
+                        string[] files = Directory.GetFiles(task);//获取文件路径
+                        foreach (var item in files)
+                        {
+                            Steps.Add(new StepModel() { GameName = Title, GameInstance = Path.GetFileName(task), StepName = item });
+                        }
                     }
                 }
             }
@@ -150,16 +181,16 @@ namespace AdbGame.ViewModel
                             {
                                 Framebuffer framebuffer = Adb.GetFrameBuffer(Adbdevice);
                                 Bitmap image = framebuffer.ToImage();
+                                byte[] imageData = image.BitmapToByteArray();
                                 foreach (var step in Steps)
                                 {
                                     if (item.GameMissionName == step.GameInstance)
                                     {
                                         if (!cts.IsCancellationRequested)
                                         {
-                                            if (File.Exists(step.StepName))
+                                            if (!UseJson)
                                             {
                                                 Rect rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(step.StepName));
-                                                //Rect rect = Gamehelper.OCR(image, "支持分身的应用");
                                                 if (rect.X != 0 && rect.Y != 0)
                                                 {
                                                     string stepName = Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4);
@@ -181,7 +212,35 @@ namespace AdbGame.ViewModel
                                             }
                                             else
                                             {
-                                                ShowMessage($"模板【{Path.GetFileName(step.StepName).Substring(0, Path.GetFileName(step.StepName).Length - 4)}】不存在", MessageType.Error);
+                                                Rect rect = default;
+                                                string imagePath = $"{ImagePath}\\{step.GameInstance}\\{step.StepName}";
+                                                if (step.MatchMode == "OCR")
+                                                {
+                                                    rect = Gamehelper.OCR(imageData, step.StepName);
+                                                }
+                                                else
+                                                {
+                                                    rect = Gamehelper.MatchTemplate(image, Gamehelper.LoadAssetImage(imagePath + ".png"));
+                                                }
+                                                if (rect.X != 0 && rect.Y != 0)
+                                                {
+                                                    if (step.StepName != "任务结束")
+                                                    {
+                                                        //使用正态分布获取随机坐标
+                                                        Point point = Gamehelper.GenerateRandomPoint(rect);
+                                                        point.X += step.XShift;
+                                                        point.Y += step.YShift;
+                                                        int x = point.X;
+                                                        int y = point.Y;
+                                                        Adb.Click(Adbdevice, point);
+                                                        ShowMessage($"点击【{step.StepName}】成功，坐标：【{x}，{y}】");
+                                                        await Task.Delay(1000);
+                                                    }
+                                                    else
+                                                    {
+                                                        await Stop();
+                                                    }
+                                                }
                                             }
                                         }
                                     }

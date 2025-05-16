@@ -8,6 +8,7 @@ using Mat = OpenCvSharp.Mat;
 using Point = System.Drawing.Point;
 using Size = OpenCvSharp.Size;
 using AdbGame.Extension;
+using Sdcb.PaddleInference;
 
 namespace AdbGame.Helper
 {
@@ -41,30 +42,38 @@ namespace AdbGame.Helper
         }
         #endregion
 
-        public Rect OCR(Bitmap srcBitmap, string dstText)
+        public Rect OCR(byte[] imageData, string dstText)
         {
             Rect rotatedRect = default;
-            FullOcrModel model = LocalFullModels.ChineseV4;
-            byte[] sampleImageData = srcBitmap.BitmapToByteArray();
+            //FullOcrModel model = LocalFullModels.ChineseV4;
 
-            using (PaddleOcrAll all = new(model)
+            try
             {
-                AllowRotateDetection = true,
-                Enable180Classification = false,
-            })
-            {
-                using (Mat src = Cv2.ImDecode(sampleImageData, ImreadModes.Color))
+                //using (PaddleOcrAll all = new(model)
+                //{
+                //    AllowRotateDetection = true,
+                //    Enable180Classification = false,
+                //})
                 {
-                    PaddleOcrResult result = all.Run(src);
-                    foreach (PaddleOcrResultRegion region in result.Regions)
+                    using (PaddleOcrAll all = new PaddleOcrAll(LocalFullModels.ChineseV4, PaddleDevice.Mkldnn()))
+                    using (Mat src = Cv2.ImDecode(imageData, ImreadModes.Color))
                     {
-                        if (region.Text == dstText)
+                        PaddleOcrResult result = all.Run(src);
+                        foreach (PaddleOcrResultRegion region in result.Regions)
                         {
-                            rotatedRect = region.Rect.RotatedRectToRect();
-                            break;
+                            if (region.Text.Contains(dstText))
+                            {
+                                rotatedRect = region.Rect.RotatedRectToRect();
+                                all.Dispose();
+                                break;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return rotatedRect;
         }
